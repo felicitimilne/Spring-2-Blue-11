@@ -23,9 +23,6 @@ sapply(ins, function(x) n_distinct(x))
 ##Number of Missing Value per Variable
 sapply(ins, function(x) sum(is.na(x)))
 
-##Make FeetInches variable numeric
-ins$Inches <- as.numeric(substring(ins$FeetInches,1,1))*12 + as.numeric(substring(ins$FeetInches,4,4))
-
 ##Variables to drop
   #Most descriptive variables were dropped; second line were removed due to quasi-complete separation
 ins_t <- subset(ins, select = -c(GivenName,MiddleInitial,Surname,StreetAddress,City,State,Country,Birthday,TelephoneNumber,MothersMaiden,Cov_ID,Cust_ID,FeetInches,ZipCode,Adj_ZIP,Date_Initial,Adj_ID,Tech_ID,
@@ -48,11 +45,7 @@ ins_t[categorical] <- lapply(ins_t[categorical], as.factor)
 table(ins_t$Pol_Count, ins_t$Fraud)
 
 ##Impute Missing Values
-#Diff_Income_DeathCodeIncome, Time_LastChange_Claim, Distance_Claim_Adj were imputed with median
-ins_t <- ins_t %>% 
-  mutate(Pop_CZIP = ifelse(is.na(Pop_CZIP), 'M', ifelse(Pop_CZIP == 1, 1, 0)),
-         MedInc_CZIP = ifelse(is.na(MedInc_CZIP), 'M', ifelse(MedInc_CZIP == 1, 1, 0)),
-         Inc_ZIPInc = ifelse(is.na(Inc_ZIPInc), 'M', ifelse(Inc_ZIPInc == 1, 1, 0)),)
+  #Diff_Income_DeathCodeIncome, Time_LastChange_Claim, Distance_Claim_Adj, Pop_CZIP, MedInc_CZIP, Inc_ZIPInc were imputed with median
 ins_t <- imputeMissings::impute(ins_t, method = "median/mode", flag = TRUE)
 
 ##Training Model
